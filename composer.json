@@ -1,0 +1,20 @@
+{
+    "name": "nece001/php-brawl-sms-tencent",
+    "description": "php 腾讯云短信基础服务项目",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Nece\\Brawl\\Sms\\Tencent\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "nece001",
+            "email": "nece001@163.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.2"
+    }
+}

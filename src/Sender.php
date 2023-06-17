@@ -36,8 +36,8 @@ class Sender extends SenderAbstract
 
         $result->setRaw($res->toJsonString());
         $data = $res->serialize();
-        if (isset($data['Response']['SendStatusSet'])) {
-            foreach ($data['Response']['SendStatusSet'] as $row) {
+        if (isset($data['SendStatusSet'])) {
+            foreach ($data['SendStatusSet'] as $row) {
                 $result->addResult($row['SerialNo'], $row['PhoneNumber'], $row['Fee'], $row['SessionContext'], $row['Code'], $row['Message'], $row['IsoCode'], $row['Code'] == 'Ok');
             }
         }
@@ -172,8 +172,9 @@ class Sender extends SenderAbstract
     {
         $data = array();
         foreach ($this->phone_numbers as $row) {
-            $data[] = '+' . $row['code'] . $row['phone_mumber'];
+            $data[] = '+' . $row['code'] . $row['phone_number'];
         }
+
         $this->phone_numbers = array();
 
         return $data;

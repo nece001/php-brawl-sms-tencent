@@ -4,11 +4,13 @@ namespace Nece\Brawl\Sms\Tencent;
 
 use Nece\Brawl\Sms\SenderAbstract;
 use Nece\Brawl\Sms\SendResult;
+use Nece\Brawl\Sms\SmsException;
 use TencentCloud\Common\Credential;
 use TencentCloud\Common\Profile\ClientProfile;
 use TencentCloud\Common\Profile\HttpProfile;
 use TencentCloud\Sms\V20210111\Models\SendSmsRequest;
 use TencentCloud\Sms\V20210111\SmsClient;
+use Throwable;
 
 class Sender extends SenderAbstract
 {
@@ -31,15 +33,21 @@ class Sender extends SenderAbstract
     {
         $result = new SendResult();
 
-        $req = $this->buildRequest($template_id, $params);
-        $res = $this->getClient()->SendSms($req);
+        try {
+            $req = $this->buildRequest($template_id, $params);
+            $res = $this->getClient()->SendSms($req);
 
-        $result->setRaw($res->toJsonString());
-        $data = $res->serialize();
-        if (isset($data['SendStatusSet'])) {
-            foreach ($data['SendStatusSet'] as $row) {
-                $result->addResult($row['SerialNo'], $row['PhoneNumber'], $row['Fee'], $row['SessionContext'], $row['Code'], $row['Message'], $row['IsoCode'], $row['Code'] == 'Ok');
+            $result->setRaw($res->toJsonString());
+            $data = $res->serialize();
+            if (isset($data['SendStatusSet'])) {
+                $result->setRequestId($data['RequestId']);
+                foreach ($data['SendStatusSet'] as $row) {
+                    $result->addResult($row['SerialNo'], $row['PhoneNumber'], $row['Fee'], $row['SessionContext'], $row['Code'], $row['Message'], $row['IsoCode'], $row['Code'] == 'Ok');
+                }
             }
+        } catch (Throwable $e) {
+            $this->error_message = $e->getMessage();
+            throw new SmsException('短信发送异常');
         }
         return $result;
     }

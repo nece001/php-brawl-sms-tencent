@@ -1,6 +1,9 @@
 # php-brawl-sms-tencent
 PHP 腾讯云短信基础服务适配项目
 
+# 依赖
+composer require tencentcloud/sms
+
 # 示例
 ```php
     $conf = array(
